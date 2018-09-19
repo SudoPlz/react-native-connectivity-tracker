@@ -5,6 +5,13 @@
 Because we can no longer trust that react-native connectivity changes are valid, so we have to double check before we trust the result.
 Here's the [RN issue](https://github.com/facebook/react-native/issues/8615)
 
+
+### How?
+
+The only thing this library does is, whenever a network change event get's dispatched by `NetInfo`, we verify that the connection is alive by pinging google.
+
+p.s: On production we verify by checking if our server is up (by overriding `verifyServersAreUp`) but you don't have to do that.
+
 ### Usage:
 
 ```javascript
