@@ -8,9 +8,12 @@ module.exports = {  // cached singleton instance
   init(options) {
     this.mOpts = options;
     NetInfo.isConnected.addEventListener('connectionChange', _.throttle(this.handleConnectivityChange.bind(this), 1000));
-    NetInfo.isConnected.fetch().then(this.handleConnectivityChange.bind(this));
+    this.tryConnection();
   },
 
+  tryConnection() {
+    NetInfo.isConnected.fetch().then(this.handleConnectivityChange.bind(this));
+  },
 
   // Connectivity handling
   // This will get called whenever our connectivity status changes
