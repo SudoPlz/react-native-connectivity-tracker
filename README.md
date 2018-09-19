@@ -30,6 +30,11 @@ ConnectivityTracker.init({
 | ---	| --- 	| ---- 		| ----------- 	 |
 | **onConnectivityChange**  	| function(bool, Date, Object)  | -  | This is the main callback you should care about. It get's dispatched whenever there's a connectivity change. |
 | **attachConnectionInfo**   	| boolean  			| false | Attaches more details about the connection on the `onConnectivityChange` callback (3rd param) |
+| **alsoVerifyOnlineStatuses**   	| boolean  			| false | By default we only verify the connectivity whenever we receive an offline status. By turning this on we'll also verify online statuses too. |
+| **dispatchOldEventsToo**   	| boolean  			| false | By default we only dispatch the latest event we received from NetInfo. By turning this on we'll dispatch EVERYTHING. Caution, the order of events is not guaranteed if this is set to true. |
 | **onError** 			| function  			| - | Pass a function here if you want to log errors.   |
 | **verifyServersAreUp**   	| Promise or function 		| - | This overrides the default verification method. Feel free to disregard this, unless  want to use your own verification method, instead of relying to google responces.  |
+
+
+
 

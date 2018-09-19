@@ -17,18 +17,37 @@ module.exports = {  // cached singleton instance
   handleConnectivityChange(isConnected) {
     const timestampOfChange = new Date(); // keep a timestamp of the change
     this.lastChangeAt = timestampOfChange; // add it to a global var
-    if (!isConnected) { // if rn says we're not connected
+    if (!isConnected  // if rn says we're not connected
+      || // OR
+      (
+        this.mOpts // if we want to double check online statuses too
+        && this.mOpts.alsoVerifyOnlineStatuses === true)
+    ) {
       this.verifyServersAreUp().then((areUp) => {
         // now that we've verified wether we're up or not
-        if (this.lastChangeAt === timestampOfChange) {
-          // make sure we ONLY dispatch if there hasn't been any more recent con change event
-          this.dispatchConnectivityChanged(areUp, timestampOfChange);
+        if (this.shouldDispatchEvent(timestampOfChange)) {
+          // also check if the value was null (in case of errors)
+          const newValue = (areUp == null) ? isConnected : areUp;
+
+          // and dispatch the event
+          this.dispatchConnectivityChanged(newValue, timestampOfChange);
         }
       });
-    } else if (this.lastChangeAt === timestampOfChange) {
+    } else if (this.shouldDispatchEvent(timestampOfChange)) {
       // make sure we ONLY dispatch if there hasn't been any more recent con change event
       this.dispatchConnectivityChanged(isConnected, timestampOfChange);
     }
+  },
+
+  shouldDispatchEvent(timestampOfChange) {
+    // only dispatch an event if
+    return (
+      // if there hasn't been any more recent con change event
+      this.lastChangeAt === timestampOfChange
+      || // OR
+      // if we wish to dispatch old events as well
+      (this.mOpts && this.mOpts.dispatchOldEventsToo === true)
+    );
   },
 
   verifyServersAreUp() {
@@ -40,7 +59,14 @@ module.exports = {  // cached singleton instance
         }
         if (this.mOpts.verifyServersAreUp.then != null) { // else if it's a promise
           // verify servers are up
-          return this.mOpts.verifyServersAreUp;
+          return this.mOpts.verifyServersAreUp
+            .then(res => res)
+            .catch((e) => {
+              if (this.mOpts.onError) {
+                this.mOpts.onError(e);
+              }
+              return null;
+            });
         }
         if (this.mOpts.onError) {
           this.mOpts.onError(
@@ -80,7 +106,7 @@ module.exports = {  // cached singleton instance
       if (this.mOpts.onError) {
         this.mOpts.onError(e);
       }
-      return false;
+      return null;
     });
   },
 
