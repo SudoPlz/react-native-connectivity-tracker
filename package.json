@@ -1,6 +1,6 @@
 {
   "name": "react-native-connectivity-tracker",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Checks wether the connection is valid",
   "main": "index.js",
   "repository": "https://github.com/SudoPlz/react-native-connectivity-tracker.git",
