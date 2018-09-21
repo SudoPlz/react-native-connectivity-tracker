@@ -12,7 +12,8 @@ module.exports = {  // cached singleton instance
   },
 
   tryConnection() {
-    NetInfo.isConnected.fetch().then(this.handleConnectivityChange.bind(this));
+    return NetInfo.isConnected.fetch()
+      .then(this.handleConnectivityChange.bind(this))
   },
 
   // Connectivity handling
@@ -26,7 +27,7 @@ module.exports = {  // cached singleton instance
         this.mOpts // if we want to double check online statuses too
         && this.mOpts.alsoVerifyOnlineStatuses === true)
     ) {
-      this.verifyServersAreUp().then((areUp) => {
+      return this.verifyServersAreUp().then((areUp) => {
         // now that we've verified wether we're up or not
         if (this.shouldDispatchEvent(timestampOfChange)) {
           // also check if the value was null (in case of errors)
@@ -34,12 +35,14 @@ module.exports = {  // cached singleton instance
 
           // and dispatch the event
           this.dispatchConnectivityChanged(newValue, timestampOfChange);
+          return newValue;
         }
       });
     } else if (this.shouldDispatchEvent(timestampOfChange)) {
       // make sure we ONLY dispatch if there hasn't been any more recent con change event
       this.dispatchConnectivityChanged(isConnected, timestampOfChange);
     }
+    return isConnected;
   },
 
   shouldDispatchEvent(timestampOfChange) {
@@ -56,13 +59,12 @@ module.exports = {  // cached singleton instance
   verifyServersAreUp() {
     if (this.mOpts) { // if we have options
       if (this.mOpts.verifyServersAreUp) {  // and we have a verification callback/promise
-        if (typeof this.mOpts.verifyServersAreUp === 'function') { // if it's a callback
+        const verification = this.mOpts.verifyServersAreUp();
+        if (typeof(verification) === 'boolean') {
+          return verification
+        } else if (verification.then != null) { // else if it's a promise
           // verify servers are up
-          return this.mOpts.verifyServersAreUp();
-        }
-        if (this.mOpts.verifyServersAreUp.then != null) { // else if it's a promise
-          // verify servers are up
-          return this.mOpts.verifyServersAreUp
+          return verification
             .then(res => res)
             .catch((e) => {
               if (this.mOpts.onError) {
@@ -71,6 +73,7 @@ module.exports = {  // cached singleton instance
               return null;
             });
         }
+
         if (this.mOpts.onError) {
           this.mOpts.onError(
             'Check the value you\'re passing to verifyServersAreUp. We support functions or promises only.',

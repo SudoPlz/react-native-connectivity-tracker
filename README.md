@@ -26,7 +26,7 @@ ConnectivityTracker.init({
     onConnectivityChange,
     attachConnectionInfo: false,
     onError: msg => console.log(msg),
-    // verifyServersAreUp: store.dispatch(checkOurServersAreUp()),
+    // verifyServersAreUp: () => store.dispatch(checkOurServersAreUp()),
 });
 ```
     
@@ -40,7 +40,7 @@ ConnectivityTracker.init({
 | **alsoVerifyOnlineStatuses**   	| boolean  			| false | By default we only verify the connectivity whenever we receive an offline status. By turning this on we'll also verify online statuses too. |
 | **dispatchOldEventsToo**   	| boolean  			| false | By default we only dispatch the latest event we received from NetInfo. By turning this on we'll dispatch EVERYTHING. Caution, the order of events is not guaranteed if this is set to true. |
 | **onError** 			| function  			| - | Pass a function here if you want to log errors.   |
-| **verifyServersAreUp**   	| Promise or function 		| - | This overrides the default verification method. Feel free to disregard this, unless  want to use your own verification method, instead of relying to google responces.  |
+| **verifyServersAreUp**   	| function 		| - | This overrides the default verification method. Feel free to disregard this, unless  want to use your own verification method, instead of relying to google responces. This function can return either a result (true or false) or a Promise  |
 
 
 ### Methods:
