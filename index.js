@@ -106,6 +106,12 @@ module.exports = {  // cached singleton instance
       },
     ).then(googleResult => (googleResult.status >= 200 && googleResult.status < 400),
     ).catch((e) => {
+      if (e
+        && e.message
+        && e.message.indexOf
+        && e.message.indexOf('Network request failed') !== -1) {
+        return false;
+      }
       if (this.mOpts.onError) {
         this.mOpts.onError(e);
       }
