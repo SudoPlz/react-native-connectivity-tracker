@@ -47,4 +47,4 @@ ConnectivityTracker.init({
 
 |Key 	|  Definition	 |
 | ---	|  ----------- 	 |
-| **tryConnection**   | This is a tottally optional method that you can call when you wish to check for a connectivity status on demand. The response comes through `onConnectivityChange` like it would typically come if the event was coming from the system.|
+| **tryConnection**   | This is a tottally optional method that you can call when you wish to check for a connectivity status on demand. Returnes a promise.|
