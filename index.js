@@ -1,5 +1,5 @@
 /* eslint-disable react/no-this-in-sfc */
-import { NetInfo } from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 import _ from 'underscore';
 
 module.exports = {  // cached singleton instance

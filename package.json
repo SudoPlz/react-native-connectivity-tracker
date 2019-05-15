@@ -1,6 +1,6 @@
 {
   "name": "react-native-connectivity-tracker",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Checks wether the connection is valid",
   "main": "index.js",
   "repository": "https://github.com/SudoPlz/react-native-connectivity-tracker.git",
@@ -11,6 +11,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@react-native-community/netinfo": "^2.0.10",
     "underscore": "*"
   }
 }

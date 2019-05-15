@@ -12,6 +12,69 @@ The only thing this library does is, whenever a network change event get's dispa
 
 p.s: On production we verify by checking if our server is up (by overriding `verifyServersAreUp`) but you don't have to do that.
 
+
+### Versions:
+
+- react-native >= 0.58  --> react-native-connectivity tracker > 2.0.0
+- react-native < 0.58  --> react-native-connectivity tracker > 1.0.0
+
+### Installation:
+
+`yarn install react-native-connectivity-tracker`
+
+
+#### Extra steps on if you're using version >= 2.0.0 (not needed if on a previous version)
+<details>
+<summary>Manually link the library on iOS</summary>
+
+Either follow the [instructions in the React Native documentation](https://facebook.github.io/react-native/docs/linking-libraries-ios#manual-linking) to manually link the framework or link using [Cocoapods](https://cocoapods.org) by adding this to your `Podfile`:
+
+```ruby
+pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
+```
+
+</details>
+
+
+<details>
+<summary>Manually link the library on Android</summary>
+
+Make the following changes:
+
+#### `android/settings.gradle`
+```groovy
+include ':react-native-community-netinfo'
+project(':react-native-community-netinfo').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/netinfo/android')
+```
+
+#### `android/app/build.gradle`
+```groovy
+dependencies {
+   ...
+   implementation project(':react-native-community-netinfo')
+}
+```
+
+#### `android/app/src/main/.../MainApplication.java`
+On top, where imports are:
+
+```java
+import com.reactnativecommunity.netinfo.NetInfoPackage;
+```
+
+Add the `NetInfoPackage` class to your list of exported packages.
+
+```java
+@Override
+protected List<ReactPackage> getPackages() {
+    return Arrays.asList(
+            new MainReactPackage(),
+            new NetInfoPackage()
+    );
+}
+```
+</details>
+
 ### Usage:
 
 ```javascript
