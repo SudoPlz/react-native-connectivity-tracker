@@ -1,24 +1,24 @@
 /* eslint-disable react/no-this-in-sfc */
-import NetInfo from "@react-native-community/netinfo";
-import _ from 'underscore';
+import NetInfo from '@react-native-community/netinfo';
 
 module.exports = {  // cached singleton instance
   mOpts: null,
   lastChangeAt: null,
   init(options) {
+    this.handleConnectivityChange = this.handleConnectivityChange.bind(this);
     this.mOpts = options;
-    NetInfo.isConnected.addEventListener('connectionChange', _.throttle(this.handleConnectivityChange.bind(this), 1000));
+    NetInfo.addEventListener('connectionChange', this.handleConnectivityChange);
     this.tryConnection();
   },
 
   tryConnection() {
-    return NetInfo.isConnected.fetch()
-      .then(this.handleConnectivityChange.bind(this))
+    return NetInfo.fetch().then(this.handleConnectivityChange);
   },
 
   // Connectivity handling
   // This will get called whenever our connectivity status changes
-  handleConnectivityChange(isConnected) {
+  handleConnectivityChange(state) {
+    const { isConnected } = state;
     const timestampOfChange = new Date(); // keep a timestamp of the change
     this.lastChangeAt = timestampOfChange; // add it to a global var
     if (!isConnected  // if rn says we're not connected
@@ -28,17 +28,18 @@ module.exports = {  // cached singleton instance
         && this.mOpts.alsoVerifyOnlineStatuses === true)
     ) {
       return this.verifyServersAreUp().then((areUp) => {
+        // also check if the value was null (in case of errors)
+        const newValue = (areUp == null) ? isConnected : areUp;
+
         // now that we've verified wether we're up or not
         if (this.shouldDispatchEvent(timestampOfChange)) {
-          // also check if the value was null (in case of errors)
-          const newValue = (areUp == null) ? isConnected : areUp;
-
           // and dispatch the event
           this.dispatchConnectivityChanged(newValue, timestampOfChange);
-          return newValue;
         }
+        return newValue;
       });
-    } else if (this.shouldDispatchEvent(timestampOfChange)) {
+    }
+    if (this.shouldDispatchEvent(timestampOfChange)) {
       // make sure we ONLY dispatch if there hasn't been any more recent con change event
       this.dispatchConnectivityChanged(isConnected, timestampOfChange);
     }
@@ -60,9 +61,10 @@ module.exports = {  // cached singleton instance
     if (this.mOpts) { // if we have options
       if (this.mOpts.verifyServersAreUp) {  // and we have a verification callback/promise
         const verification = this.mOpts.verifyServersAreUp();
-        if (typeof(verification) === 'boolean') {
-          return verification
-        } else if (verification.then != null) { // else if it's a promise
+        if (typeof verification === 'boolean') {
+          return verification;
+        }
+        if (verification.then != null) { // else if it's a promise
           // verify servers are up
           return verification
             .then(res => res)
@@ -121,5 +123,4 @@ module.exports = {  // cached singleton instance
       return null;
     });
   },
-
 };
