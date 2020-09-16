@@ -1,4 +1,4 @@
-/* eslint-disable react/no-this-in-sfc */
+
 import NetInfo from '@react-native-community/netinfo';
 
 module.exports = {  // cached singleton instance
@@ -100,7 +100,6 @@ module.exports = {  // cached singleton instance
   },
 
   defaultVerifyServersAreUp() {
-    // eslint-disable-next-line
     return fetch(
       'https://www.google.com', {
         headers: {

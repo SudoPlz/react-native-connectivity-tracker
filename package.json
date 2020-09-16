@@ -10,7 +10,7 @@
     "url": "https://www.linkedin.com/in/sudoplz"
   },
   "license": "MIT",
-  "dependencies": {
+  "peerDependencies": {
     "@react-native-community/netinfo": "^5.9.6"
   }
 }
